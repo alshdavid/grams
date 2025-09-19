@@ -1,16 +1,23 @@
 import type { ChartData } from "./components/chart/chart.tsx";
-import { calculateDecayRateHours } from "./platform/decay.ts";
-import { Ingestion } from "./platform/ingestion.ts";
-import { tryParseUnit } from "./platform/times.ts";
+import type { Ingestion } from "./platform/ingestion.ts";
+import { unit } from "mathjs";
 
 globalThis.addEventListener(
   "message",
   ({ data }: Event & { data: [number, Array<Ingestion>] }) => {
-    const [id, ingestions] = data
-    const result = intoChartData(ingestions)
+    const [id, ingestions] = data;
+    const result = intoChartData(ingestions);
     globalThis.postMessage([id, result]);
   }
 );
+
+export function tryParseUnit(v: string, u: string): number {
+  try {
+    return unit(v).toNumber(u);
+  } catch {
+    return parseFloat(v);
+  }
+}
 
 function offsetInHours(ingestion: Ingestion): number {
   if (!ingestion.offset) throw new Error("No Offset");
@@ -25,6 +32,37 @@ function doseInMg(ingestion: Ingestion): number {
 function halfLifeInHours(ingestion: Ingestion): number {
   if (!ingestion.halfLife) throw new Error("No Halflife");
   return tryParseUnit(ingestion.halfLife, "hours");
+}
+
+export function calculateDecayRateHours(dose: number, halfLife: number): Array<number> {
+  if (dose === 0) {
+    return [0];
+  }
+
+  const decayConstant = Math.log(2) / halfLife;
+  
+  const decayArray: number[] = [];
+  let hour = 0;
+  let currentDose = dose;
+  
+  const threshold = dose * 0.0001; // 0.01% threshold
+  
+  while (currentDose >= threshold) {
+    currentDose = dose * Math.exp(-decayConstant * hour);
+    
+    if (currentDose < threshold) {
+      currentDose = 0;
+    }
+    
+    decayArray.push(currentDose);
+    hour++;
+    
+    if (hour > 1000) {
+      break;
+    }
+  }
+  
+  return decayArray;
 }
 
 function intoChartData(ingestions: Ingestion[]): ChartData {
@@ -59,7 +97,7 @@ function intoChartData(ingestions: Ingestion[]): ChartData {
 
     return chartData;
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return {};
   }
 }
