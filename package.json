@@ -1,0 +1,24 @@
+{
+  "name": "grams.io",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "npx rspack serve",
+    "build": "npx rspack --config ./rspack.config.mjs --mode production"
+  },
+  "dependencies": {
+    "@nivo/core": "^0.99.0",
+    "@nivo/line": "^0.99.0",
+    "mathjs": "^14.7.0",
+    "preact": "^10.27.2"
+  },
+  "devDependencies": {
+    "@rspack/cli": "^1.5.5",
+    "@rspack/core": "^1.5.5",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.4",
+    "http-server": "^14.1.1",
+    "style-loader": "^4.0.0"
+  }
+}
