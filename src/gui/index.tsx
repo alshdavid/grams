@@ -4,12 +4,10 @@ import { useEffect, useState } from "preact/hooks";
 import { Chart, ChartData } from "./components/chart/chart.tsx";
 import { Button } from "./components/button/button.tsx";
 import { Input } from "./components/input/input.tsx";
-import { Ingestion } from "./platform/ingestion.ts";
+import { Ingestion } from "../platform/ingestion.ts";
 
 function App() {
-  const [ingestions, setIngestions] = useState<Array<Ingestion>>([
-    // Ingestion.empty().merge({ offset: '0days', drugName: "Test", dosage: "0.2mg", halfLife: "5days" }),
-  ]);
+  const [ingestions, setIngestions] = useState<Array<Ingestion>>([]);
 
   // Do half life calculations on another thread
   const chartData = useHalfLifeWorker(ingestions);
@@ -34,9 +32,12 @@ function App() {
         <div className="logo">
           <img src="icon.svg" />
           <div>
-            <h1>grams.io</h1>
+            <h1>grams</h1>
             <h2>How long do drugs stay in your body?</h2>
           </div>
+        </div>
+        <div>
+          <a href="https://github.com/alshdavid/grams">https://github.com/alshdavid/grams</a>
         </div>
       </nav>
 
@@ -114,8 +115,8 @@ function App() {
 
 render(<App />, document.body);
 
-const url = "./worker.js";
-const worker = new Worker(url);
+const url = globalThis.importMap.resolve("worker")!;
+const worker = new Worker(url, { type: "module" });
 
 function useHalfLifeWorker(ingestions: Array<Ingestion>): ChartData {
   const [chartData, setChartData] = useState<ChartData>({});

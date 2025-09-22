@@ -3,11 +3,11 @@
 
 body {
   background-color: var(--color-dark-background);
-  color: var(--color-dark-text)
+  color: var(--color-dark-text);
 }
 
 h1 {
-  color: var(--color-dark-heading)
+  color: var(--color-dark-heading);
 }
 
 p {
@@ -17,12 +17,15 @@ p {
 }
 
 a {
-  color: var(--color-blue-300)
+  color: var(--color-blue-300);
 }
 
 nav {
   padding-top: 2.5rem;
   padding-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   .logo {
     display: flex;
@@ -35,7 +38,7 @@ nav {
     }
 
     * {
-      margin: 0
+      margin: 0;
     }
 
     h1 {
@@ -45,7 +48,7 @@ nav {
     }
 
     h2 {
-      opacity: .8;
+      opacity: 0.8;
       margin-top: 0;
       font-size: 14px;
       font-weight: 400;
@@ -54,9 +57,9 @@ nav {
 }
 
 .ingestion-table {
-  &>div {
+  & > div {
     display: grid;
-    grid-template-columns: .2fr .5fr .2fr .18fr .08fr;
+    grid-template-columns: 0.2fr 0.5fr 0.2fr 0.18fr 0.08fr;
   }
 }
 
@@ -64,4 +67,3 @@ nav {
   display: flex;
   justify-content: space-between;
 }
-

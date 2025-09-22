@@ -1,6 +1,16 @@
+import path from "node:path";
+import url from "node:url";
+import fs from "node:fs";
 import { defineConfig } from "@rspack/cli";
-import { rspack } from '@rspack/core';
-import HtmlWebpackPlugin from "html-webpack-plugin";
+import { rspack } from "@rspack/core";
+import { HtmlPlugin } from "./html-plugin.mjs";
+
+const dirname = path.dirname(url.fileURLToPath(import.meta.url));
+const root = path.dirname(path.dirname(dirname));
+
+if (fs.existsSync(path.join(root, "dist"))) {
+  fs.rmSync(path.join(root, "dist"), { recursive: true, force: true });
+}
 
 export default defineConfig({
   experiments: {
@@ -8,26 +18,27 @@ export default defineConfig({
     outputModule: true,
   },
   entry: {
-    index: "./src/index.tsx",
-    worker: "./src/worker.ts",
+    index: "./src/gui/index.tsx",
+    worker: "./src/worker/main.ts",
   },
   output: {
-    filename: '[name].js',
+    filename: "[name].[contenthash].js",
+    path: path.join(root, "dist"),
     module: true,
-    chunkFormat: 'module',
-    chunkLoading: 'import',
-    workerChunkLoading: 'import',
+    chunkFormat: "module",
+    chunkLoading: "import",
+    workerChunkLoading: "import",
   },
   resolve: {
-    extensions: ['...', '.ts', '.tsx', '.jsx'],
+    extensions: ["...", ".ts", ".tsx", ".jsx"],
     extensionAlias: {
-      '.js': ['.ts', '.tsx', '.js'],
+      ".js": [".ts", ".tsx", ".js"],
     },
     alias: {
-      react: 'preact/compat',
-      'react-dom/test-utils': 'preact/test-utils',
-      'react-dom': 'preact/compat', // Must be below test-utils
-      'react/jsx-runtime': 'preact/jsx-runtime',
+      react: "preact/compat",
+      "react-dom/test-utils": "preact/test-utils",
+      "react-dom": "preact/compat",
+      "react/jsx-runtime": "preact/jsx-runtime",
     },
   },
   module: {
@@ -70,47 +81,28 @@ export default defineConfig({
       },
       {
         test: /\.css$/i,
-        use: [rspack.CssExtractRspackPlugin.loader, 'css-loader'],
-        type: 'javascript/auto',
+        use: [rspack.CssExtractRspackPlugin.loader, "css-loader"],
+        type: "javascript/auto",
       },
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({
+    new HtmlPlugin({
       minify: false,
       filename: "index.html",
-      template: "src/index.html",
+      template: "src/gui/index.html",
       inject: "head",
+      baseHref: process.env.BASE_HREF,
     }),
-    {
-      apply(compiler) {
-        compiler.hooks.compilation.tap(
-          "ScriptAttributeInjector",
-          (compilation) =>
-            HtmlWebpackPlugin.getHooks(compilation).alterAssetTags.tapAsync(
-              "ScriptAttributeInjector",
-              (data, cb) => {
-                data.assetTags.scripts = data.assetTags.scripts.map((asset) => {
-                  asset.attributes.type = "module";
-                  return asset;
-                });
-                return cb(null, data);
-              }
-            )
-        );
-      },
-    },
     new rspack.CssExtractRspackPlugin({}),
     new rspack.CopyRspackPlugin({
-      patterns: [
-        { from: 'src/icon.svg' },
-        { from: 'src/robots.txt' },
-      ],
+      patterns: [{ from: "src/gui/icon.svg" }, { from: "src/gui/robots.txt" }],
     }),
+    new rspack.javascript.EnableChunkLoadingPlugin("import"),
   ],
   devServer: {
     hot: false,
-    port: 8080,
+    port: 4200,
     historyApiFallback: true,
     allowedHosts: "all",
     host: "0.0.0.0",
@@ -120,8 +112,8 @@ export default defineConfig({
         value: "no-store",
       },
     ],
-    // devMiddleware: {
-    //   writeToDisk: true
-    // }
+    devMiddleware: {
+      // writeToDisk: true,
+    },
   },
 });

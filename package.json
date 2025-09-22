@@ -4,8 +4,12 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev": "npx rspack serve",
-    "build": "npx rspack --config ./rspack.config.mjs --mode production"
+    "build": "npx rspack --config ./.config/rspack/rspack.config.mjs --mode production",
+    "dev": "npx rspack serve --config ./.config/rspack/rspack.config.mjs",
+    "format": "npx prettier --write ./src/**/*",
+    "serve": "npx http-server-rs -p 4200 ./dist",
+    "stats": "npx rspack build --analyze --config ./.config/rspack/rspack.config.mjs",
+    "watch": "npx rspack --watch --config ./.config/rspack/rspack.config.mjs"
   },
   "dependencies": {
     "@nivo/core": "^0.99.0",
@@ -19,6 +23,8 @@
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.4",
     "http-server": "^14.1.1",
+    "http-server-rs": "^0.0.6",
+    "prettier": "^3.6.2",
     "style-loader": "^4.0.0"
   }
 }

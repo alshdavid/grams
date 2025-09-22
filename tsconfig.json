@@ -8,6 +8,9 @@
     "jsx": "react",
     "jsxFactory": "h",
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "types": [
+      "./.config/typings/import-map.d.ts"
+    ]
   }
 }

@@ -5,16 +5,16 @@ export class Ingestion {
   halfLife?: string;
 
   static empty(): Ingestion {
-    const ingestion = new Ingestion()
-    ingestion.offset = undefined
-    ingestion.drugName = undefined
-    ingestion.dosage = undefined
-    ingestion.halfLife = undefined
-    return ingestion
+    const ingestion = new Ingestion();
+    ingestion.offset = undefined;
+    ingestion.drugName = undefined;
+    ingestion.dosage = undefined;
+    ingestion.halfLife = undefined;
+    return ingestion;
   }
 
   merge(ingestion: Partial<Ingestion>): Ingestion {
-    Object.assign(this,ingestion)
-    return this
+    Object.assign(this, ingestion);
+    return this;
   }
 }

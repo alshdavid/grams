@@ -9,7 +9,7 @@ export function useChart(): typeof ResponsiveLineType | undefined {
 
   useEffect(() => {
     import("@nivo/line").then((result) =>
-      setResponsiveLine([result.ResponsiveLine])
+      setResponsiveLine([result.ResponsiveLine]),
     );
   }, [globalThis]);
 

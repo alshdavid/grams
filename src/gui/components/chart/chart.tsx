@@ -15,7 +15,7 @@ export type ChartProps = {
 };
 
 export function Chart({ data, height = "40vh" }: ChartProps) {
-  const ResponsiveLine = useChart()
+  const ResponsiveLine = useChart();
 
   if (!ResponsiveLine) {
     return <div style={{ height: height }}></div>;
@@ -40,7 +40,7 @@ export function Chart({ data, height = "40vh" }: ChartProps) {
       return 10;
     }
     const largestDose = Math.max(
-      ...chartData.flatMap((entry) => entry.data).map((entry) => entry.y)
+      ...chartData.flatMap((entry) => entry.data).map((entry) => entry.y),
     );
     return "auto";
   }, [chartData]);
@@ -50,7 +50,7 @@ export function Chart({ data, height = "40vh" }: ChartProps) {
       return 10;
     }
     const longestDuration = Math.max(
-      ...chartData.flatMap((entry) => entry.data).map((entry) => entry.x)
+      ...chartData.flatMap((entry) => entry.data).map((entry) => entry.x),
     );
     if (longestDuration > 10) {
       return "auto";
