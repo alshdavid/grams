@@ -4,6 +4,10 @@ export class Ingestion {
   dosage?: string;
   halfLife?: string;
 
+  static new(input: Partial<Ingestion>): Ingestion {
+    return Ingestion.empty().merge(input)
+  }
+
   static empty(): Ingestion {
     const ingestion = new Ingestion();
     ingestion.offset = undefined;
