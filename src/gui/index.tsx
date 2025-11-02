@@ -5,18 +5,35 @@ import { Chart, ChartData } from "./components/chart/chart.tsx";
 import { Button } from "./components/button/button.tsx";
 import { Input } from "./components/input/input.tsx";
 import { Ingestion } from "../platform/ingestion.ts";
+import { IngestionModel, parseFromHash, storeAsHash } from "../platform/serde.ts";
+
+
+const [initialConfig, initialConfigEncoded] = parseFromHash()
 
 function App() {
-  const [ingestions, setIngestions] = useState<Array<Ingestion>>([
-    Ingestion.new({ offset: '0days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
-    Ingestion.new({ offset: '1days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
-    Ingestion.new({ offset: '2days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
-    Ingestion.new({ offset: '3days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
-    Ingestion.new({ offset: '4days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
-    Ingestion.new({ offset: '5days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
-    Ingestion.new({ offset: '6days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
-    Ingestion.new({ offset: '7days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
-  ]);
+  const [ingestions, setIngestions] = useState<Array<Ingestion>>(initialConfig);
+  const [ingestionsEncoded, setIngestionsEncoded] = useState<string>(initialConfigEncoded);
+
+  useEffect(() => {
+    const result = storeAsHash(ingestions)
+    if (ingestionsEncoded !== result) {
+      setIngestionsEncoded(result)
+    }
+  }, [ingestions])
+
+  useEffect(() => {
+    function onChange() {
+      const [config, configEncoded] = parseFromHash()
+      if (configEncoded === ingestionsEncoded) {
+        return
+      }
+      setIngestionsEncoded(configEncoded)
+      setIngestions(config)
+    }
+
+    globalThis.addEventListener("hashchange", onChange)
+    return () => globalThis.removeEventListener("hashchange", onChange)
+  }, [ingestionsEncoded])
 
   // Do half life calculations on another thread
   const chartData = useHalfLifeWorker(ingestions);
@@ -144,4 +161,43 @@ function useHalfLifeWorker(ingestions: Array<Ingestion>): ChartData {
   }, [ingestions]);
 
   return chartData;
+}
+
+// CONSOLE UTILS
+// @ts-expect-error
+globalThis.grams = class {
+  static Ingestion = Ingestion
+
+  static addIngestion(model: IngestionModel) {
+    const [config] = parseFromHash()
+    config.push(Ingestion.new(model))
+    storeAsHash(config)
+  }
+
+  static removeIngestion(i: number) {
+    const [config] = parseFromHash()
+    config.splice(i, 1)
+    storeAsHash(config)
+  }
+
+  static replaceIngestion(i: number, model: IngestionModel) {
+    const [config] = parseFromHash()
+    config[i] = Ingestion.new(model)
+    storeAsHash(config)
+  }
+
+  static updateIngestion(i: number, model: IngestionModel) {
+    const [config] = parseFromHash()
+    Object.assign(config[i], Ingestion.new(model))
+    storeAsHash(config)
+  }
+
+  static getIngestions(): Ingestion[] {
+    const [config] = parseFromHash()
+    return config
+  }
+
+  static setIngestions(ingestions: Ingestion[]): void {
+    storeAsHash(ingestions)
+  }
 }

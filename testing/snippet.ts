@@ -41,3 +41,15 @@ export function generateTestData() {
 
   return ingestions;
 }
+
+
+  const [ingestions, setIngestions] = useState<Array<Ingestion>>([
+    Ingestion.new({ offset: '0days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
+    Ingestion.new({ offset: '1days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
+    Ingestion.new({ offset: '2days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
+    Ingestion.new({ offset: '3days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
+    Ingestion.new({ offset: '4days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
+    Ingestion.new({ offset: '5days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
+    Ingestion.new({ offset: '6days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
+    Ingestion.new({ offset: '7days', drugName: 'Caffine', dosage: '100mg', halfLife: '8h' }),
+  ]);
