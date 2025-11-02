@@ -40,7 +40,7 @@ export function Chart({ data, height = "40vh" }: ChartProps) {
       return 10;
     }
     const largestDose = Math.max(
-      ...chartData.flatMap((entry) => entry.data).map((entry) => entry.y),
+      ...chartData.flatMap((entry) => entry.data).map((entry) => entry.y)
     );
     return "auto";
   }, [chartData]);
@@ -50,7 +50,7 @@ export function Chart({ data, height = "40vh" }: ChartProps) {
       return 10;
     }
     const longestDuration = Math.max(
-      ...chartData.flatMap((entry) => entry.data).map((entry) => entry.x),
+      ...chartData.flatMap((entry) => entry.data).map((entry) => entry.x)
     );
     if (longestDuration > 10) {
       return "auto";
@@ -86,7 +86,7 @@ export function Chart({ data, height = "40vh" }: ChartProps) {
           },
           grid: {
             line: {
-              stroke: "var(--color-dark-text)",
+              stroke: "none",
             },
           },
           tooltip: {
@@ -100,6 +100,16 @@ export function Chart({ data, height = "40vh" }: ChartProps) {
         pointBorderColor={{ from: "seriesColor" }}
         useMesh={true}
         crosshairType="x"
+        markers={chartData.length ? Array.from(
+          { length: Math.floor(chartData[0].data.length / 24) },
+          (_, i) => ({
+            axis: "x",
+            value: chartData[0].data[i * 24].x, // Use the x value at each 24th point
+            lineStyle: { stroke: "var(--color-dark-text)", strokeWidth: 1 },
+            legend: `Day ${i + 1}`,
+            legendOrientation: "vertical",
+          })
+        ) : undefined}
       />
     </div>
   );

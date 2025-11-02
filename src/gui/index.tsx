@@ -197,6 +197,19 @@ globalThis.grams = class {
     return config
   }
 
+  static repeatDaily(n: number, ingestion: Ingestion) {
+    const output: Array<Ingestion> = []
+
+    for (let i = 0; i < n; i++) {
+      output.push(Ingestion.new({
+        ...ingestion,
+        offset: `${i}days`,
+      }))
+    }
+
+    return output
+  }
+
   static setIngestions(ingestions: Ingestion[]): void {
     storeAsHash(ingestions)
   }
